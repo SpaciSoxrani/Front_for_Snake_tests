@@ -1,0 +1,51 @@
+import { commands } from './coreMechanic.js';
+
+export function startGame(snake, meals, fieldSize, maxTicks) {
+
+}
+
+export function getNextCommand(snake, meal) {
+    let [ headX, headY ] = snake[0].split(';');
+    let [ neckX, neckY ] = snake[1].split(';');
+    let mealX=meal[0];
+    let mealY=meal[2];
+              
+    let xShift = headX - neckX;
+    let yShift = headY - neckY;
+    let xMealHead = headX - mealX;
+    let vot = headY - mealY; 
+
+    if(yShift === 1){//смотрит вниз
+        if(xMealHead > 0)  return commands.TURN_RIGHT;
+        
+        if(xMealHead < 0) return commands.TURN_LEFT;
+        
+        if(xMealHead === 0) return commands.FORWARD;
+    }
+
+    if(yShift === -1){//смотрит вверх
+        if(xMealHead > 0) return commands.TURN_LEFT;
+        
+        if(xMealHead < 0) return commands.TURN_RIGHT;
+        
+        if(xMealHead === 0) return commands.FORWARD;
+    }
+
+    if(xShift === 1){//смотрит направо
+        if(vot > 0) return commands.TURN_LEFT;
+        
+        if(vot < 0) return commands.TURN_RIGHT;
+        
+        else return commands.FORWARD;
+
+    }
+
+    if(xShift === -1){//смотрит надево
+        if(vot > 0) return commands.TURN_RIGHT;
+
+        if(vot < 0) return commands.TURN_LEFT;
+        
+        else return commands.FORWARD;
+        
+    }
+}
