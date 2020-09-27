@@ -1,0 +1,218 @@
+import { commands } from './coreMechanic.js';
+
+export function startGame(snake, meals, fieldSize, maxTicks) {
+    let currentFieldSize = fieldSize;
+    let currentMeals = meals;
+    let currentMaxTicks = maxTicks;
+
+    return{
+        currentFieldSize : currentFieldSize,
+        currentMeals : currentMeals,
+        currentMaxTicks : currentMaxTicks
+    };
+
+}
+
+export function getNextCommand(snake, meal) {
+    let [ headX, headY ] = snake[0].split(';');
+    let [ neckX, neckY ] = snake[1].split(';');
+    let mealX=meal[0];
+    let mealY=meal[2];
+              
+    let xShift = headX - neckX;
+    let yShift = headY - neckY;
+    let xMealHead = headX - mealX;
+    let vot = headY - mealY; 
+
+    let nearXRight = parseInt(headX) + 1;
+    let nearXLeft = parseInt(headX) - 1;
+    let nearYDown = parseInt(headY) - 1;
+    let nearYUp = parseInt(headY) + 1;
+
+    //проверяем на соседние клетки, чтобы змея себя не съела
+    let coordXRight = `${ nearXRight };${ headY }`;
+    let coordXLeft = `${ nearXLeft };${ headY }`;
+    let coordYDown = `${ headX };${ nearYDown }`;
+    let coordYUp = `${ headX };${ nearYUp }`;
+
+    let start = startGame();
+    let field = start.currentFieldSize;
+    let startMeals = start.currentMeals;
+    let startMaxTicks = start.currentMaxTicks;
+
+    if(yShift === 1){//смотрит вниз
+    
+        if(snake.includes(`${ parseInt(headX)+2 };${ headY }`) && snake.includes(`${ parseInt(headX) +1 };${ parseInt(headY) -1 }`) && snake.includes(`${ parseInt(headX) +1 };${ parseInt(headY) +1 }`))
+        {
+            if(!snake.includes(coordYUp))  return commands.FORWARD;
+            else return commands.TURN_RIGHT;
+        }
+
+        if(snake.includes(`${ parseInt(headX)-2 };${ headY }`) && snake.includes(`${ parseInt(headX)-1 };${ parseInt(headY) -1 }`) && snake.includes(`${ parseInt(headX)-1 };${ parseInt(headY) +1 }`))
+        {
+            if(!snake.includes(coordYUp))  return commands.FORWARD;
+            else return commands.TURN_LEFT;
+        }
+
+        if(xMealHead > 0 )
+        {
+            if(nearXLeft != -1 && !snake.includes(coordXLeft)) return commands.TURN_RIGHT;
+            if(nearYUp != field - 1 && !snake.includes(coordYUp))  return commands.FORWARD;
+            else  return commands.TURN_LEFT;
+        }  
+        
+        if(xMealHead < 0 )
+        {
+            if(nearXRight != field - 1  && !snake.includes(coordXRight)) return commands.TURN_LEFT;
+            if(nearYUp != field - 1 && !snake.includes(coordYUp))  return commands.FORWARD;
+            else  return commands.TURN_RIGHT;
+        } 
+        
+        else 
+        {
+            if(vot > 0)
+            {
+                if(nearXLeft != - 1 && !snake.includes(coordXLeft)) return commands.TURN_RIGHT;
+                else  return commands.TURN_LEFT;
+            }
+            if(snake.includes(coordYUp))
+            {
+                if(nearXLeft != - 1 && !snake.includes(coordXLeft)) return commands.TURN_RIGHT;
+                else  return commands.TURN_LEFT;
+            }
+            return commands.FORWARD;
+        }
+    }
+
+    if(yShift === -1){//смотрит вверх
+        if(snake.includes(`${ parseInt(headX)+2 };${ headY }`) && snake.includes(`${ parseInt(headX) +1 };${ parseInt(headY) -1 }`) && snake.includes(`${ parseInt(headX) +1 };${ parseInt(headY) +1 }`))
+        {
+            if(!snake.includes(coordYDown))  return commands.FORWARD;
+            else return commands.TURN_LEFT;
+        }
+
+        if(snake.includes(`${ parseInt(headX)-2 };${ headY }`) && snake.includes(`${ parseInt(headX)-1 };${ parseInt(headY) -1 }`) && snake.includes(`${ parseInt(headX)-1 };${ parseInt(headY) +1 }`))
+        {
+            if(!snake.includes(coordYDown))  return commands.FORWARD;
+            else return commands.TURN_RIGHT;
+        } 
+
+        if(xMealHead > 0)
+        {
+            if(nearXLeft != - 1 && !snake.includes(coordXLeft)) return commands.TURN_LEFT;
+            if(nearYDown != - 1 && !snake.includes(coordYDown))  return commands.FORWARD;
+            else  return commands.TURN_RIGHT;
+        }
+        if(xMealHead < 0)
+        {
+            if(nearXRight != field - 1 && !snake.includes(coordXRight)) return commands.TURN_RIGHT;
+            if(nearYDown != - 1 && !snake.includes(coordYDown))  return commands.FORWARD;
+            else  return commands.TURN_LEFT;
+        } 
+        
+        else 
+        {
+            if(vot < 0)
+            {
+                if(nearXLeft != - 1 && !snake.includes(coordXLeft)) return commands.TURN_LEFT;
+                else  return commands.TURN_RIGHT;
+            }
+            if(snake.includes(coordYDown))
+            {
+                if(nearXLeft != - 1 && !snake.includes(coordXLeft)) return commands.TURN_LEFT;
+                else  return commands.TURN_RIGHT;
+            }
+            return commands.FORWARD;
+        }
+    }
+
+    if(xShift === 1){//смотрит направо
+        if(snake.includes(`${ parseInt(headX) };${ parseInt(headY)-2 }`) && snake.includes(`${ parseInt(headX) +1 };${ parseInt(headY) -1 }`) && snake.includes(`${ parseInt(headX) -1 };${ parseInt(headY) -1 }`))
+        {
+            if(!snake.includes(coordYRight))  return commands.FORWARD;
+            else return commands.TURN_RIGHT;
+        }
+
+        if(snake.includes(`${ parseInt(headX) };${ parseInt(headY)+2 }`) && snake.includes(`${ parseInt(headX)-1 };${ parseInt(headY) +1 }`) && snake.includes(`${ parseInt(headX)-1 };${ parseInt(headY) +1 }`))
+        {
+            if(!snake.includes(coordYRight))  return commands.FORWARD;
+            else return commands.TURN_LEFT;
+        } 
+
+        if(vot > 0)
+        {
+            if(nearYDown != - 1 && !snake.includes(coordYDown)) return commands.TURN_LEFT;
+            if(nearXRight != field - 1 && !snake.includes(coordXRight))  return commands.FORWARD;
+            else  return commands.TURN_RIGHT;
+        } 
+        
+        if(vot < 0)
+        {
+            if(nearYUp != field - 1 && !snake.includes(coordYUp)) return commands.TURN_RIGHT;
+            if(nearXRight != field - 1 && !snake.includes(coordXRight))  return commands.FORWARD;
+            else  return commands.TURN_LEFT;
+        } 
+        
+        else 
+        {
+            if(xMealHead > 0)
+            {
+                if(nearYDown != - 1 && !snake.includes(coordYDown)) return commands.TURN_LEFT;
+                else  return commands.TURN_RIGHT;
+            }
+
+            if(snake.includes(coordXRight))
+            {
+                if(nearYDown != - 1 && !snake.includes(coordYDown)) return commands.TURN_LEFT;
+                else  return commands.TURN_RIGHT;
+            }
+            return commands.FORWARD;
+        }
+
+    }
+
+    if(xShift === -1){//смотрит налево
+        if(snake.includes(`${ parseInt(headX) };${ parseInt(headY)-2 }`) && snake.includes(`${ parseInt(headX) +1 };${ parseInt(headY) -1 }`) && snake.includes(`${ parseInt(headX) -1 };${ parseInt(headY) -1 }`))
+        {
+            if(!snake.includes(coordYRight))  return commands.FORWARD;
+            else return commands.TURN_LEFT;
+        }
+
+        if(snake.includes(`${ parseInt(headX) };${ parseInt(headY)+2 }`) && snake.includes(`${ parseInt(headX)-1 };${ parseInt(headY) +1 }`) && snake.includes(`${ parseInt(headX)-1 };${ parseInt(headY) +1 }`))
+        {
+            if(!snake.includes(coordYRight))  return commands.FORWARD;
+            else return commands.TURN_RIGHT;
+        } 
+
+        if(vot > 0)
+        {
+            if(nearYDown != - 1 && !snake.includes(coordYDown)) return commands.TURN_RIGHT;
+            if(nearXLeft !=  - 1 && !snake.includes(coordXLeft))  return commands.FORWARD;
+            else  return commands.TURN_LEFT;
+        }
+
+        if(vot < 0)
+        {
+            if(nearYUp != field - 1 && !snake.includes(coordYUp)) return commands.TURN_LEFT;
+            if(nearXLeft != - 1 && !snake.includes(coordXLeft))  return commands.FORWARD;
+            else  return commands.TURN_RIGHT;
+        } 
+        
+        else 
+        {
+            if(xMealHead < 0)
+            {
+                if(nearYDown != - 1 && !snake.includes(coordYDown)) return commands.TURN_RIGHT;
+                else  return commands.TURN_LEFT;
+            }
+
+            if(snake.includes(coordXLeft))
+            {
+                if(nearYDown != - 1 && !snake.includes(coordYDown)) return commands.TURN_RIGHT;
+                else  return commands.TURN_LEFT;
+            }
+            return commands.FORWARD;
+        }
+        
+    }
+}
